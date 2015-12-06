@@ -1,0 +1,23 @@
+= bootstrap_form_for @unit, url: unit_path(@unit) do |f|
+  .row
+    .col-md-6
+      = f.text_field :name, class: "form-control", label: "Unit Number"
+      = f.text_field :baths, class: "form-control"
+      = f.text_area :description, class: "form-control"
+
+      - @unit.photos.each do |p|
+        = f.fields_for :photos, p do |pf|
+          img src=p.path
+          = pf.text_area :description
+      = f.submit
+    .col-md-6
+      - @unit.rooms.each do |room|
+        = f.fields_for :rooms, room do |rf|
+          = rf.text_field :name, class: "form-control", label: "Room Number"
+          = rf.text_area :description, class: "form-control"
+
+          - room.photos.each do |p|
+            = rf.fields_for :photos, p do |pf|
+              img src=p.path
+              = pf.text_area :description
+          hr

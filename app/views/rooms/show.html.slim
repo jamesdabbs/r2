@@ -1,0 +1,10 @@
+h2 Unit #{@room.unit.name}
+
+= form_for @room do |f|
+  = f.text_field :name
+  = f.text_field :rent
+  = f.date_field :available_on
+  / TODO: Checkbox toggle for hidden
+  = f.text_area  :description
+  / TODO: pictures
+  = f.submit

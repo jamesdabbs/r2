@@ -1,0 +1,23 @@
+- @units.each do |unit|
+  .unit
+    h2 data-edit-url=unit_url(unit)
+      = unit.name
+      small.beds-and-baths= unit.beds_and_baths
+
+    - if unit.preview_images.any?
+      = raise "Display preview pictures"
+
+    - if unit.description.present?
+      p= unit.description
+
+    - unit.visible_rooms.each do |room|
+      .room
+        h3 data-edit-url=room_url(room)
+          = room.name
+        - if room.available_on
+          .available= room.available_on
+        - if room.rent
+          .rent= room.rent
+
+        .description= room.description
+

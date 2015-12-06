@@ -1,0 +1,11 @@
+= bootstrap_form_for @unit do |f|
+  = f.text_field :name
+  = f.text_field :beds_and_baths
+  = f.text_area  :description
+  / TODO: pictures
+  = f.submit
+
+h2 Rooms
+ul
+  - @unit.rooms.each do |room|
+    li= link_to room.name, room_path(room)

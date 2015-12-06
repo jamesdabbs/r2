@@ -1,0 +1,13 @@
+- @units.each do |unit|
+  .unit
+    h3
+      = link_to unit_path(unit) do
+        = unit.name
+        ' 
+        small #{unit.rooms.count} rooms
+    .row
+      .col-md-4
+        p= unit.description
+      .col-md-8
+        - unit.preview_images.first(3).each do |img|
+          img src=img
