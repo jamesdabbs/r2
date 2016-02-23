@@ -10,7 +10,7 @@ class PreviewController < ApplicationController
 
   def deploy
     authorize :preview, :deploy?
-    DeployJob.perform_later preview_url
+    DeployJob.perform_later user: current_user, url: preview_url
     redirect_to :back, notice: "Deploy started!"
   end
 end

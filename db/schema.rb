@@ -64,6 +64,7 @@ ActiveRecord::Schema.define(version: 20151206220604) do
     t.inet     "last_sign_in_ip"
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
+    t.string   "name",     null: false
     t.boolean  "deployer", null: false, default: false
   end
 

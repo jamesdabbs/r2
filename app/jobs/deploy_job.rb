@@ -1,10 +1,11 @@
 class DeployJob < ActiveJob::Base
   # TODO: Rollbar monitoring
 
-  def perform url
+  def perform user:, url:
     Deployer.new(
-      url:      url,
-      work_dir: Rails.root.join("tmp", "dst")
+      user:        user,
+      url:         url,
+      working_dir: Rails.root.join("tmp", "dist")
     ).run
   end
 end

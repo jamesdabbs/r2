@@ -9,6 +9,8 @@ class User < ActiveRecord::Base
   has_many :managers
   has_many :managed_units, through: :managers, source: :unit
 
+  validates_presence_of :name
+
   def manager?
     managers.any?
   end

@@ -1,6 +1,6 @@
-h2 Unit #{@room.unit.name}
+h2 #{@room.unit.name}
 
-= form_for @room do |f|
+= bootstrap_form_for @room do |f|
   = f.text_field :name
   = f.text_field :rent
   = f.date_field :available_on

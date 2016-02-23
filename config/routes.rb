@@ -1,3 +1,5 @@
+require 'sidekiq/web'
+
 Rails.application.routes.draw do
   devise_for :users
 
@@ -9,4 +11,8 @@ Rails.application.routes.draw do
 
   get  'preview'        => 'preview#index',  as: :preview
   post 'preview/deploy' => 'preview#deploy', as: :deploy
+
+  authenticate :user, lambda { |u| u.deployer? } do
+    mount Sidekiq::Web => '/sidekiq', as: 'sidekiq'
+  end
 end

@@ -1,50 +1,88 @@
 class Deployer
-  attr_reader :url, :work_dir
+  class Error < StandardError; end
 
-  def initialize url:, work_dir:
-    @url, @work_dir = url, work_dir
+  attr_reader :user, :url, :working_dir
+
+  def initialize user:, url:, working_dir:
+    @user, @url, @working_dir = user, url, working_dir
   end
 
   def run
-    # FIXME: this just needs to run in Sidekiq so that it doesn't block the web process
-    #   that it's trying to call out to
-    Thread.new do
-      pull_repo
-      write_preview
-      commit
-      push
-      notify
-    end
+    sha = commit_changes
+    push
+    notify sha
   end
 
   private
 
-  def pull_repo
-    # FIXME: this needs to actually pull stuff and not be a shell injection
-    `mkdir -p #{work_dir} && cd #{work_dir} && git init`
+
+  def credentials
+    @_credentials ||= Rugged::Credentials::UserPassword.new \
+      username: Figaro.env.DEPLOY_USERNAME!,
+      password: Figaro.env.DEPLOY_PASSWORD!
   end
 
-  def write_preview
-    dest = work_dir.join "index.html"
-    File.write dest, preview
+  def repo
+    @_repo ||= if Dir.exists?(working_dir)
+      Rugged::Repository.new working_dir.to_s
+    else
+      Rugged::Repository.clone_at \
+        "https://github.com/15th-and-p/15th-and-p.github.io.git",
+        working_dir.to_s,
+        credentials: credentials
+    end
   end
 
-  def commit
-    # FIXME: similarly, this needs not to be a shell injection
-    `cd #{work_dir} && git add -A . && git commit -m "Deploy"`
+  def commit_changes
+    oid = repo.write preview.to_s, :blob
+    repo.index.read_tree repo.head.target.tree
+    repo.index.add path: "index.html", oid: oid, mode: 0100644
+    tree    = repo.index.write_tree repo
+    parents = repo.empty? ? [] : [ repo.head.target ].compact
+
+    Rugged::Commit.create repo,
+      tree:       tree,
+      parents:    parents,
+      update_ref: "HEAD",
+      message:    "Deploy",
+      author: {
+        email: user.email,
+        name:  user.name,
+        time:  Time.now
+      },
+      committer: {
+        email: "jamesdabbs+15pdeployer@gmail.com",
+        name:  "Deployer",
+        time:  Time.now
+      }
   end
 
   def push
-    # TODO: implement
+    repo.push "origin", ["refs/heads/master"], credentials: credentials
   end
 
-  def notify
-    # TODO: send notification to Slack
+  def notify sha
+    link   = "https://github.com/15th-and-p/15th-and-p.github.io/commit/#{sha}"
+    author = "#{user.name} <#{user.email}>"
+
+    Slack.new.notify \
+      text: "Changes pushed",
+      attachments: [
+        {
+          fields: [
+            { title: "Commit", value: "<#{link}|#{sha}>", short: true },
+            { title: "By", value: author, short: true }
+          ],
+          fallback: "Commit #{sha} (#{link}) by #{author}"
+        }
+      ]
   end
 
   def preview
     @_preview ||= Nokogiri::HTML(Net::HTTP.get URI url).tap do |doc|
       doc.css(".preview-only").remove
     end
+  rescue Errno::ECONNREFUSED
+    raise Error.new("Could not connect to `#{url}`")
   end
 end

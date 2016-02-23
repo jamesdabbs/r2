@@ -25,22 +25,26 @@ units.each do |number, last_room, baths|
     description:    Faker::Lorem.paragraph
 
   rand(2..4).times do
-    #unit.photos.create! path: pug, description: Faker::Lorem.paragraph
+    unit.photos.create! path: pug, description: Faker::Lorem.paragraph
   end
 
   rooms.each do |letter|
     room = unit.rooms.create! \
-      name:        "##{number}#{letter}",
-      description: Faker::Lorem.paragraph
+      name:         "Unit #{letter}",
+      description:  Faker::Lorem.paragraph,
+      available_on: rand(-2 .. 11).months.from_now + rand(-10 .. 10).days,
+      rent:         "$#{rand(30 .. 42) * 50}"
+
 
     rand(2..4).times do
-      #room.photos.create! path: pug, description: Faker::Lorem.paragraph
+      room.photos.create! path: pug, description: Faker::Lorem.paragraph
     end
   end
 end
 
 admin = User.create! \
   email:    "jamesdabbs@gmail.com",
+  name:     "James Dabbs",
   password: "password",
   deployer: true
 Unit.find_each { |u| admin.managed_units << u }

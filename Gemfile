@@ -19,9 +19,11 @@ gem 'twitter-bootstrap-rails'
 gem 'bootstrap_form'
 gem 'reform'
 gem 'rugged'
+gem 'sidekiq'
+gem 'sinatra', require: false
+gem 'faker'
 
 group :development, :test do
-  gem 'faker'
   gem 'rspec-rails'
 end
 

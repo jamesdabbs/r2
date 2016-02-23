@@ -11,13 +11,21 @@
       p= unit.description
 
     - unit.visible_rooms.each do |room|
-      .room
-        h3 data-edit-url=room_url(room)
-          = room.name
-        - if room.available_on
-          .available= room.available_on
-        - if room.rent
-          .rent= room.rent
+      .room.row
+        .col-md-2.summary
+          h3 data-edit-url=room_url(room)
+            = room.name
+          - if room.rent
+            .rent= room.rent
+          - if room.available_on
+            .available
+              - if room.available_on > Time.now
+                | Available #{room.available_on.strftime "%B %d"}
+              - else
+                | Available now
 
-        .description= room.description
+        .col-md-10
+          - room.photos.each do |url|
+            img src=url
+          .description= room.description
 

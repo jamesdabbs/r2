@@ -1,0 +1,5 @@
+#!rails runner
+
+print "Deploying ... "
+DeployJob.new.perform user: User.first, url: "http://localhost:5000/preview"
+puts "Done"
