@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
+ruby '2.2.4'
 
 
 gem 'rails', '4.2.5.1'
@@ -10,19 +11,19 @@ gem 'coffee-rails', '~> 4.1.0'
 gem 'quiet_assets'
 gem 'jquery-rails'
 
+gem 'bootstrap_form'
 gem 'carrierwave'
 gem 'devise'
+gem 'faker'
 gem 'figaro'
 gem 'pry-rails'
 gem 'pundit'
-gem 'twitter-bootstrap-rails'
-gem 'bootstrap_form'
 gem 'reform'
 gem 'rugged'
+gem 's3_direct_upload'
 gem 'sidekiq'
 gem 'sinatra', require: false
-gem 'faker'
-gem 's3_direct_upload'
+gem 'twitter-bootstrap-rails'
 
 group :development, :test do
   gem 'rspec-rails'
