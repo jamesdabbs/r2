@@ -24,8 +24,8 @@
               - else
                 | Available now
 
-        .col-md-10
-          - room.photos.each do |url|
-            img src=url
+        .col-md-10.photo-grid
+          - room.photos.each do |photo|
+            img src=photo.path
           .description= room.description
 

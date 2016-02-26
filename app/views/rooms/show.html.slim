@@ -1,10 +1,28 @@
 h2 #{@room.unit.name}
 
-= bootstrap_form_for @room do |f|
-  = f.text_field :name
-  = f.text_field :rent
-  = f.date_field :available_on
-  / TODO: Checkbox toggle for hidden
-  = f.text_area  :description
-  / TODO: pictures
-  = f.submit
+.row
+  .col-md-6
+    = bootstrap_form_for @room do |f|
+      = f.text_field :name
+      = f.text_field :rent
+      = f.date_field :available_on
+      / TODO: Checkbox toggle for hidden
+      = f.text_area  :description
+      / TODO: pictures
+      = f.submit
+
+  .col-md-6.photo-grid
+    - @photos.each do |row|
+      .row
+        - row.each do |photo|
+          .col-md-4
+            - if photo
+              img(src=photo.path)
+            - else
+              = s3_uploader_form \
+                  callback_url: room_photos_path(@room),
+                  callback_param: "photo[image_url]",
+                  class: "direct-upload",
+                  key_starts_with: "photos/",
+                  key: "photos/#{Rails.env}/units/#{@room.unit_id}/rooms/#{@room.id}/{timestamp}-{unique_id}-#{SecureRandom.hex}/${filename}" do
+                = file_field_tag :file, multiple: true

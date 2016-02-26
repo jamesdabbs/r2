@@ -2,6 +2,8 @@ class RoomsController < ApplicationController
   def show
     @room = Room.find params[:id]
     authorize @room
+
+    @photos = ([nil] + @room.photos.to_a).in_groups_of(3, false)
   end
 
   def update

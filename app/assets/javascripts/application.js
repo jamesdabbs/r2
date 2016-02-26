@@ -12,4 +12,13 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require s3_direct_upload
 //= require_tree .
+
+$(function() {
+    $(".direct-upload").S3Uploader()
+
+    $(".direct-upload").bind("ajax:success", function(e, data) {
+        console.log("data", data)
+    })
+})

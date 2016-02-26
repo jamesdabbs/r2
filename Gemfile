@@ -22,6 +22,7 @@ gem 'rugged'
 gem 'sidekiq'
 gem 'sinatra', require: false
 gem 'faker'
+gem 's3_direct_upload'
 
 group :development, :test do
   gem 'rspec-rails'

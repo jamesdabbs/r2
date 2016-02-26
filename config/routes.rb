@@ -6,7 +6,9 @@ Rails.application.routes.draw do
   root "units#index"
 
   resources :units, only: [:index, :show, :update] do
-    resources :rooms, only: [:show, :update], shallow: true
+    resources :rooms, only: [:show, :update], shallow: true do
+      resources :photos, only: [:create]
+    end
   end
 
   get  'preview'        => 'preview#index',  as: :preview
